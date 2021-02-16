@@ -1,8 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import MainRouter from './MainRouter';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/styles';
+import theme from './theme';
 
 function App() {
-    return <div className='App'>Import components here</div>;
+    return (
+        <BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <MainRouter />
+            </ThemeProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App;
