@@ -53,7 +53,7 @@ export default function Signup() {
 
     // when any input value changes, gets the name of the field
     const handleChange = (name) => (event) => {
-        setValues({ ...values, name: event.target.value });
+        setValues({ ...values, [name]: event.target.value });
     };
 
     // Invokes the signup method
