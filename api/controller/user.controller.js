@@ -29,6 +29,7 @@ exports.create = async (req, res, next) => {
     }
 };
 
+// Returns a list of all users
 exports.list = async (req, res, next) => {
     try {
         let users = await User.find().select('name email updated created');
@@ -57,12 +58,14 @@ exports.userByID = async (req, res, next, id) => {
     }
 };
 
+// Returns single user
 // Remove sensitive information fields
 exports.read = (req, res, next) => {
     req.profile.password = undefined;
     return res.json(req.profile);
 };
 
+// Updates a user
 exports.update = async (req, res, next) => {
     try {
         let user = req.profile;
@@ -79,6 +82,7 @@ exports.update = async (req, res, next) => {
     }
 };
 
+// Deletes a user
 exports.remove = async (req, res, next) => {
     try {
         let user = req.profile;

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
-module.exports = (req, res, next) => {
+exports.isAuthenticated = (req, res, next) => {
     const authorizationHeader = req.get('Authorization');
 
     // If header doesn't exist, user isn't logged in on client side
@@ -27,4 +27,16 @@ module.exports = (req, res, next) => {
 
     req.isAuth._id = match._id;
     return next();
+};
+
+
+exports.isAuthorized = (req, res, next) => {
+    const authorized =
+        req.profile && req.isAuth && req.profile._id == req.isAuth._id;
+    if (!authorized) {
+        return res.status('403').json({
+            error: 'User is not authorized',
+        });
+    }
+    next();
 };

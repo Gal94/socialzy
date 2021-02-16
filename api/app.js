@@ -6,12 +6,12 @@ const cookieParser = require('cookie-parser');
 const compress = require('compression');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const config = require('./config/config');
-const page = require('./template');
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
-const isAuth = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
@@ -22,23 +22,18 @@ app.use(cookieParser());
 app.use(compress());
 app.use(helmet());
 app.use(cors());
-app.use(isAuth);
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+app.use(auth.isAuthenticated);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res, next) => {
-    res.status(200).send(page());
+    res.status(200).send({ message: 'homepage' });
 });
-
-// default error route
-// app.use((req, res, next) => {
-//     const error = new HttpError('Failed to find route.', 404);
-//     next(error);
-// });
 
 // error handler middleware
 app.use((err, req, res, next) => {
-    //delete the file if is in the request
+    // Delete the file if is in the request
     if (req.file) {
         fs.unlink(req.file.path, () => {
             //Failed to delete file
