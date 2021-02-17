@@ -50,7 +50,6 @@ export default function Profile({ match }) {
         if (data && data.error) {
             setRedirectToSignin(true);
         } else {
-            console.log(data);
             setUser(data);
         }
 
@@ -92,7 +91,7 @@ export default function Profile({ match }) {
                                         <Edit />
                                     </IconButton>
                                 </Link>
-                                {/* <DeleteUser userId={user._id} /> */}
+                                <DeleteUser userId={user._id} />
                             </ListItemSecondaryAction>
                         )}
                 </ListItem>

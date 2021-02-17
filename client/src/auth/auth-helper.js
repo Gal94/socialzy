@@ -26,4 +26,4 @@ const clearJWT = async (cb) => {
     const data = await signout();
     document.cookie = 't=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 };
-export { authenticate, isAuthenticated };
+export { authenticate, isAuthenticated, clearJWT };
