@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const extend = require('lodash/extend');
 const bcrypt = require('bcrypt');
+const formidable = require('formidable');
+const fs = require('fs');
 // const errorHandler = require('./error.controller');
 
 exports.create = async (req, res, next) => {
@@ -32,7 +34,9 @@ exports.create = async (req, res, next) => {
 // Returns a list of all users
 exports.list = async (req, res, next) => {
     try {
-        let users = await User.find().select('name email updated created');
+        let users = await User.find().select(
+            'name email updated created photo'
+        );
         res.json(users);
     } catch (err) {
         return res.status(400).json({
@@ -66,20 +70,66 @@ exports.read = (req, res, next) => {
 };
 
 // Updates a user
-exports.update = async (req, res, next) => {
-    try {
+// exports.update = async (req, res, next) => {
+//     // Parse the incoming form - pass a cb upon execution
+//     let form = new formidable.IncomingForm();
+//     form.keepExtensions = true;
+//     form.parse(req, async (err, fields, files) => {
+//         if (err) {
+//             console.log(err);
+//             return res
+//                 .status(400)
+//                 .json({ error: 'Photo could not be uploaded' });
+//         }
+//         let user = req.profile;
+//         // Extends and merges the changes from the parsed fields to user (lodash)
+//         user = extend(user, fields);
+//         user.updated = Date.now();
+
+//         // File is stored temporarily on the filesystem - deleted upon completion
+//         if (files.photo) {
+//             user.photo.data = fs.readFileSync(file.photo.path);
+//             user.photo.contentType = files.photo.type;
+//         }
+//         try {
+//             await user.save();
+//             user.password = undefined;
+//             res.json(user);
+//         } catch (err) {
+//             return res.status(400).json({
+//                 error: errorHandler.getErrorMessage(err),
+//             });
+//         }
+//     });
+// };
+
+exports.update = (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            console.log(err);
+            return res.status(400).json({
+                error: 'Photo could not be uploaded',
+            });
+        }
         let user = req.profile;
-        // Extends and merges the changes from req.body to user (lodash)
-        user = extend(user, req.body);
+        user = extend(user, fields);
         user.updated = Date.now();
-        await user.save();
-        user.password = undefined;
-        res.json(user);
-    } catch (err) {
-        return res.status(400).json({
-            error: errorHandler.getErrorMessage(err),
-        });
-    }
+        if (files.photo) {
+            user.photo.data = fs.readFileSync(files.photo.path);
+            user.photo.contentType = files.photo.type;
+        }
+        try {
+            await user.save();
+            user.password = undefined;
+            res.json(user);
+        } catch (err) {
+            return res.status(400).json({
+                error: errorHandler.getErrorMessage(err),
+            });
+        }
+    });
 };
 
 // Deletes a user
@@ -95,4 +145,18 @@ exports.remove = async (req, res, next) => {
             error: errorHandler.getErrorMessage(err),
         });
     }
+};
+
+exports.photo = (req, res, next) => {
+    // if photo is found in profile
+    if (req.profile.photo.data) {
+        res.set('Content-Type', req.profile.photo.contentType);
+        return res.send(req.profile.photo.data);
+    }
+    next();
+};
+
+exports.defaultPhoto = (req, res) => {
+    console.log(process.cwd());
+    return res.sendFile(process.cwd() + '/uploads/images/profile-pic.png');
 };

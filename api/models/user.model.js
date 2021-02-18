@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: 'Password field is required',
     },
+    about: {
+        type: String,
+        trim: true,
+    },
+    photo: {
+        data: Buffer,
+        contentType: String,
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema);

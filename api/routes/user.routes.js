@@ -11,6 +11,12 @@ router.param('userId', userController.userByID);
 
 router.route('/').get(userController.list).post(userController.create);
 
+router.route('/defaultphoto').get(userController.defaultPhoto);
+
+router
+    .route('/photo/:userId')
+    .get(userController.photo, userController.defaultPhoto);
+
 router
     .route('/:userId')
     .get(userController.read)

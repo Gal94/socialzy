@@ -8,13 +8,19 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const path = require('path');
 
+//TODO:
+// For SSR
+// const react = require('react');
+// const ReactDOMServer = require('react-dom/server');
+// const StaticRouter = require('react-router-dom/').StaticRouter;
+// const MainRouter = require('../client/src/MainRouter');
+
 const config = require('./config/config');
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
 const auth = require('./middlewares/auth');
 
 const app = express();
-
 //MIDDLEWARES
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
