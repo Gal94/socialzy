@@ -15,6 +15,7 @@ import Person from '@material-ui/icons/Person';
 import Divider from '@material-ui/core/Divider';
 import DeleteUser from './DeleteUser';
 import { isAuthenticated } from '../auth/auth-helper';
+import FollowProfileButton from './FollowProfileButton';
 import { read } from './api-user';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,9 +33,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Profile({ match }) {
     const classes = useStyles();
-    const [user, setUser] = useState({ name: '', email: '', about: '' });
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+        about: '',
+        following: null,
+        followers: null,
+    });
+    const [following, setFollowing] = useState(false);
     const [redirectToSignin, setRedirectToSignin] = useState(false);
-    const jwt = isAuthenticated;
+    const jwt = isAuthenticated();
 
     // Fetch user, if failed instruct to redirect
     const fetchUser = async () => {
@@ -48,14 +56,52 @@ export default function Profile({ match }) {
         );
 
         if (data && data.error) {
+            console.log(data.error);
             setRedirectToSignin(true);
         } else {
             setUser(data);
+            let isFollowing = checkFollow(data);
+            setFollowing(isFollowing);
         }
 
         return function cleanup() {
             abortController.abort();
         };
+    };
+
+    // if one element has passed the test return true
+    const checkFollow = (user) => {
+        if (user.followers) {
+            const match = user.followers.some((follower) => {
+                return follower._id == jwt.user._id;
+            });
+            return match;
+        }
+        return false;
+    };
+
+    // Call api will be either follow or unfollow
+    const clickFollowButton = (callApi) => {
+        callApi(
+            {
+                userId: jwt.user._id,
+            },
+            {
+                t: jwt.token,
+            },
+            user._id
+        ).then((data) => {
+            if (data.error) {
+                setUser({ ...user, error: data.error });
+            } else {
+                // change the state of following and update the user with the new following/ers array
+                setUser({
+                    ...user,
+                    user: data,
+                });
+                setFollowing(!following);
+            }
+        });
     };
 
     const photoUrl = user._id
@@ -71,7 +117,6 @@ export default function Profile({ match }) {
     if (redirectToSignin) {
         return <Redirect to='/signin' />;
     }
-    console.log(photoUrl);
     return (
         <Paper className={classes.root} elevation={4}>
             <Typography variant='h6' className={classes.title}>
@@ -87,19 +132,21 @@ export default function Profile({ match }) {
                     <ListItemText primary={user.name} secondary={user.email} />{' '}
                     {/* Render the edit profile option if that is the logged in user */}
                     {isAuthenticated().user &&
-                        isAuthenticated().user._id == user._id && (
-                            <ListItemSecondaryAction>
-                                <Link to={'/user/edit/' + user._id}>
-                                    <IconButton
-                                        aria-label='Edit'
-                                        color='primary'
-                                    >
-                                        <Edit />
-                                    </IconButton>
-                                </Link>
-                                <DeleteUser userId={user._id} />
-                            </ListItemSecondaryAction>
-                        )}
+                    isAuthenticated().user._id == user._id ? (
+                        <ListItemSecondaryAction>
+                            <Link to={'/user/edit/' + user._id}>
+                                <IconButton aria-label='Edit' color='primary'>
+                                    <Edit />
+                                </IconButton>
+                            </Link>
+                            <DeleteUser userId={user._id} />
+                        </ListItemSecondaryAction>
+                    ) : (
+                        <FollowProfileButton
+                            following={following}
+                            onButtonClick={clickFollowButton}
+                        />
+                    )}
                 </ListItem>
                 <ListItem>
                     {' '}

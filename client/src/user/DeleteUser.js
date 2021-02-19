@@ -36,7 +36,6 @@ export default function DeleteUser(props) {
             console.log(data.error);
         } else {
             clearJWT(() => {
-                console.log('deleted');
                 setRedirect(true);
             });
         }

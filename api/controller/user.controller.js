@@ -49,9 +49,8 @@ exports.list = async (req, res, next) => {
 exports.userByID = async (req, res, next, id) => {
     try {
         // populate the list of followers and following
-        let user = await (
-            await User.findById(id).populate('following', '_id name')
-        )
+        let user = await User.findById(id)
+            .populate('following', '_id name')
             .populate('followers', '_id name')
             .exec();
         if (!user)
@@ -62,6 +61,7 @@ exports.userByID = async (req, res, next, id) => {
         req.profile = user;
         next();
     } catch (err) {
+        console.log(err);
         return res.status('400').json({
             error: 'Could not retrieve user',
         });

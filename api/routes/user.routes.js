@@ -3,6 +3,7 @@
 const express = require('express');
 const userController = require('../controller/user.controller');
 const isAuthorized = require('../middlewares/auth').isAuthorized;
+const isAuthenticated = require('../middlewares/auth').isAuthenticated;
 
 const router = express.Router();
 
@@ -15,11 +16,15 @@ router.route('/defaultphoto').get(userController.defaultPhoto);
 
 router
     .route('/follow')
-    .put(isAuthorized, userController.addFollowing, userController.addFollower);
+    .put(
+        isAuthenticated,
+        userController.addFollowing,
+        userController.addFollower
+    );
 router
     .route('/unfollow')
     .put(
-        isAuthorized,
+        isAuthenticated,
         userController.removeFollowing,
         userController.removeFollower
     );
@@ -30,8 +35,8 @@ router
 
 router
     .route('/:userId')
-    .get(isAuthorized, userController.read)
-    .put(isAuthorized, userController.update)
-    .delete(isAuthorized, userController.remove);
+    .get(isAuthenticated, userController.read)
+    .put(isAuthenticated, isAuthorized, userController.update)
+    .delete(isAuthenticated, isAuthorized, userController.remove);
 
 module.exports = router;

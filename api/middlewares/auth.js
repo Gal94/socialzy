@@ -17,7 +17,6 @@ exports.isAuthenticated = (req, res, next) => {
         req.isAuth = false;
         return next();
     }
-
     if (!match) {
         req.isAuth = false;
         return next();

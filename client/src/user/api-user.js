@@ -85,4 +85,45 @@ const deleteUser = async (params, credentials) => {
     }
 };
 
-export { createUser, getList, read, updateUser, deleteUser };
+const follow = async (params, credentials, followId) => {
+    try {
+        let response = await fetch('http://localhost:5000/api/users/follow/', {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + credentials.t,
+            },
+            body: JSON.stringify({ userId: params.userId, followId: followId }),
+        });
+        return await response.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+
+const unfollow = async (params, credentials, followId) => {
+    try {
+        let response = await fetch(
+            'http://localhost:5000/api/users/unfollow/',
+            {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + credentials.t,
+                },
+                body: JSON.stringify({
+                    userId: params.userId,
+                    followId: followId,
+                }),
+            }
+        );
+        return await response.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export { createUser, getList, read, updateUser, deleteUser, follow, unfollow };
