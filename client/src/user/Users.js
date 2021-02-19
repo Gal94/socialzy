@@ -68,7 +68,14 @@ export default function Users() {
                         >
                             <ListItem button>
                                 <ListItemAvatar>
-                                    <Avatar>
+                                    <Avatar
+                                        src={
+                                            `http://localhost:5000/api/users/photo/${
+                                                user._id
+                                            }?${new Date().getTime()}` ||
+                                            'http://localhost:5000/api/users/defaultphoto'
+                                        }
+                                    >
                                         <Person />
                                     </Avatar>
                                 </ListItemAvatar>

@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Profile({ match }) {
     const classes = useStyles();
-    const [user, setUser] = useState({ name: '', email: '' });
+    const [user, setUser] = useState({ name: '', email: '', about: '' });
     const [redirectToSignin, setRedirectToSignin] = useState(false);
     const jwt = isAuthenticated;
 
@@ -58,6 +58,12 @@ export default function Profile({ match }) {
         };
     };
 
+    const photoUrl = user._id
+        ? `http://localhost:5000/api/users/photo/${
+              user._id
+          }?${new Date().getTime()}`
+        : 'http://localhost:5000/api/users/defaultphoto';
+
     useEffect(() => {
         fetchUser();
     }, [match.params.userId]);
@@ -65,7 +71,7 @@ export default function Profile({ match }) {
     if (redirectToSignin) {
         return <Redirect to='/signin' />;
     }
-
+    console.log(photoUrl);
     return (
         <Paper className={classes.root} elevation={4}>
             <Typography variant='h6' className={classes.title}>
@@ -74,7 +80,7 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar>
+                        <Avatar src={photoUrl}>
                             <Person />
                         </Avatar>
                     </ListItemAvatar>
@@ -94,6 +100,10 @@ export default function Profile({ match }) {
                                 <DeleteUser userId={user._id} />
                             </ListItemSecondaryAction>
                         )}
+                </ListItem>
+                <ListItem>
+                    {' '}
+                    <ListItemText primary={user.about} />{' '}
                 </ListItem>
                 <Divider />
                 <ListItem>

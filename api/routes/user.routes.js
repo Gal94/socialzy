@@ -14,12 +14,23 @@ router.route('/').get(userController.list).post(userController.create);
 router.route('/defaultphoto').get(userController.defaultPhoto);
 
 router
+    .route('/follow')
+    .put(isAuthorized, userController.addFollowing, userController.addFollower);
+router
+    .route('/unfollow')
+    .put(
+        isAuthorized,
+        userController.removeFollowing,
+        userController.removeFollower
+    );
+
+router
     .route('/photo/:userId')
     .get(userController.photo, userController.defaultPhoto);
 
 router
     .route('/:userId')
-    .get(userController.read)
+    .get(isAuthorized, userController.read)
     .put(isAuthorized, userController.update)
     .delete(isAuthorized, userController.remove);
 

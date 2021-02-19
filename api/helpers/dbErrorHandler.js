@@ -1,4 +1,4 @@
-const dbErrors;
+let dbErrors = {};
 
 dbErrors.getErrorMessage = (err) => {
     let message = '';

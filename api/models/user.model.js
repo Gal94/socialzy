@@ -30,6 +30,9 @@ const UserSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String,
     },
+    // The references point to users in the collection who are following/followed
+    following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
 });
 
 module.exports = mongoose.model('User', UserSchema);

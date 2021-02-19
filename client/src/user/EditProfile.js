@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
+import FileUpload from '@material-ui/icons/AddPhotoAlternate';
 import { isAuthenticated } from '../auth/auth-helper';
 import { read, updateUser } from './api-user';
 import { Redirect } from 'react-router';
@@ -35,6 +36,17 @@ const useStyles = makeStyles((theme) => ({
         margin: 'auto',
         marginBottom: theme.spacing(2),
     },
+    bigAvatar: {
+        width: 60,
+        height: 60,
+        margin: 'auto',
+    },
+    input: {
+        display: 'none',
+    },
+    filename: {
+        marginLeft: '10px',
+    },
 }));
 
 export default function EditProfile({ match }) {
@@ -43,11 +55,12 @@ export default function EditProfile({ match }) {
         name: '',
         password: '',
         email: '',
+        about: '',
+        photo: '',
         open: false,
         error: '',
         redirectToProfile: false,
     });
-
     const jwt = isAuthenticated();
 
     const fetchUser = async () => {
@@ -64,7 +77,12 @@ export default function EditProfile({ match }) {
         if (data && data.error) {
             setValues({ ...values, error: data.error });
         } else {
-            setValues({ ...values, name: data.name, email: data.email });
+            setValues({
+                ...values,
+                name: data.name,
+                email: data.email,
+                about: data.about,
+            });
         }
 
         return function cleanup() {
@@ -77,15 +95,16 @@ export default function EditProfile({ match }) {
     }, [match.params.userId]);
 
     const clickSubmit = async () => {
-        const user = {
-            name: values.name || undefined,
-            email: values.email || undefined,
-            password: values.password || undefined,
-        };
+        let userData = new FormData();
+        values.name && userData.append('name', values.name);
+        values.email && userData.append('email', values.email);
+        values.password && userData.append('password', values.password);
+        values.about && userData.append('about', values.about);
+        values.photo && userData.append('photo', values.photo);
         const data = await updateUser(
             { userId: match.params.userId },
             { t: jwt.token },
-            user
+            userData
         );
 
         if (data && data.error) {
@@ -96,7 +115,9 @@ export default function EditProfile({ match }) {
     };
 
     const handleChange = (fieldName, e) => {
-        setValues({ ...values, [fieldName]: e.target.value });
+        const value =
+            fieldName === 'photo' ? e.target.files[0] : e.target.value;
+        setValues({ ...values, [fieldName]: value });
     };
 
     if (values.redirectToProfile) {
@@ -109,6 +130,28 @@ export default function EditProfile({ match }) {
                 <Typography variant='h6' className={classes.title}>
                     Edit Profile
                 </Typography>
+                <span className={classes.filename}>
+                    {values.photo ? values.photo.name : ''}
+                </span>
+                <br />
+                <input
+                    accept='image/*'
+                    onChange={(e) => handleChange('photo', e)}
+                    className={classes.input}
+                    id='icon-button-file'
+                    type='file'
+                />
+                <label htmlFor='icon-button-file'>
+                    <Button
+                        variant='contained'
+                        color='default'
+                        component='span'
+                    >
+                        Upload
+                        <FileUpload />
+                    </Button>
+                </label>
+                <br />
                 <TextField
                     id='name'
                     label='Name'
@@ -116,6 +159,17 @@ export default function EditProfile({ match }) {
                     value={values.name}
                     onChange={(e) => handleChange('name', e)}
                     margin='normal'
+                />
+                <br />
+                <TextField
+                    id='multiline-flexible'
+                    label='About'
+                    multiline
+                    rows='2'
+                    margin='normal'
+                    className={classes.textField}
+                    value={values.about}
+                    onChange={(e) => handleChange('about', e)}
                 />
                 <br />
                 <TextField
@@ -137,7 +191,6 @@ export default function EditProfile({ match }) {
                     onChange={(e) => handleChange('password', e)}
                     margin='normal'
                 />
-                <br />{' '}
                 {values.error && (
                     <Typography component='p' color='error'>
                         <Icon color='error' className={classes.error}>
