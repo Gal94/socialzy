@@ -18,6 +18,7 @@ const path = require('path');
 const config = require('./config/config');
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
+const postRoutes = require('./routes/post.routes');
 const auth = require('./middlewares/auth');
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 app.use(auth.isAuthenticated);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
 
 app.get('/', (req, res, next) => {
     res.status(200).send({ message: 'homepage' });

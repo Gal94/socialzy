@@ -20,6 +20,7 @@ import { isAuthenticated } from '../auth/auth-helper';
 import FollowProfileButton from './FollowProfileButton';
 import ProfileTabs from './ProfileTabs';
 import { read } from './api-user';
+import { postsByUser } from '../post/api-post';
 
 const useStyles = makeStyles((theme) => ({
     root: theme.mixins.gutters({
@@ -45,6 +46,7 @@ export default function Profile({ match }) {
     });
     const [following, setFollowing] = useState(false);
     const [redirectToSignin, setRedirectToSignin] = useState(false);
+    const [posts, setPosts] = useState([]);
     const jwt = isAuthenticated();
 
     // Fetch user, if failed instruct to redirect
@@ -63,6 +65,7 @@ export default function Profile({ match }) {
             setRedirectToSignin(true);
         } else {
             setUser(data);
+            loadPosts(match.params.userId);
             let isFollowing = checkFollow(data);
             setFollowing(isFollowing);
         }
@@ -81,6 +84,20 @@ export default function Profile({ match }) {
             return match;
         }
         return false;
+    };
+
+    const loadPosts = async (users) => {
+        let data = await postsByUser(
+            {
+                userId: user,
+            },
+            { t: jwt.token }
+        );
+        if (data && data.error) {
+            console.log(data.error);
+        } else {
+            setPosts(data);
+        }
     };
 
     // Call api will be either follow or unfollow
@@ -167,7 +184,7 @@ export default function Profile({ match }) {
             </List>
             <ProfileTabs
                 user={user}
-                // posts={posts}
+                posts={posts}
                 // removePostUpdate={removePost}
             />
         </Paper>

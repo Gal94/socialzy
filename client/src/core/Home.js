@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import unicornbikeImg from './../assets/images/unicornbike.jpg';
+import NewsFeed from '../post/NewsFeed';
 import FindPeople from './../user/FindPeople';
 import Grid from '@material-ui/core/Grid';
 import { isAuthenticated } from '../auth/auth-helper';
@@ -83,7 +84,7 @@ const Home = ({ history }) => {
             {defaultPage && (
                 <Grid container spacing={8}>
                     <Grid item xs={8} sm={7}>
-                        {/* <Newsfeed /> */}
+                        <NewsFeed />
                     </Grid>
                     <Grid item xs={6} sm={5}>
                         <FindPeople />
