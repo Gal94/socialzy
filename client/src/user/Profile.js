@@ -1,3 +1,5 @@
+// TODO - add snackbar component with a message upon following/unfollowing users
+
 import { useState, useEffect } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +18,7 @@ import Divider from '@material-ui/core/Divider';
 import DeleteUser from './DeleteUser';
 import { isAuthenticated } from '../auth/auth-helper';
 import FollowProfileButton from './FollowProfileButton';
+import ProfileTabs from './ProfileTabs';
 import { read } from './api-user';
 
 const useStyles = makeStyles((theme) => ({
@@ -130,7 +133,8 @@ export default function Profile({ match }) {
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={user.name} secondary={user.email} />{' '}
-                    {/* Render the edit profile option if that is the logged in user */}
+                    {/* Render the edit profile option if that is the logged in user ||
+                        Render the follow/unfollow button otherwise */}
                     {isAuthenticated().user &&
                     isAuthenticated().user._id == user._id ? (
                         <ListItemSecondaryAction>
@@ -161,6 +165,11 @@ export default function Profile({ match }) {
                     />
                 </ListItem>
             </List>
+            <ProfileTabs
+                user={user}
+                // posts={posts}
+                // removePostUpdate={removePost}
+            />
         </Paper>
     );
 }

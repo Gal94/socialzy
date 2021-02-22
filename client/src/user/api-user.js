@@ -102,7 +102,6 @@ const follow = async (params, credentials, followId) => {
     }
 };
 
-
 const unfollow = async (params, credentials, followId) => {
     try {
         let response = await fetch(
@@ -116,7 +115,7 @@ const unfollow = async (params, credentials, followId) => {
                 },
                 body: JSON.stringify({
                     userId: params.userId,
-                    followId: followId,
+                    unfollowId: followId,
                 }),
             }
         );
@@ -126,4 +125,32 @@ const unfollow = async (params, credentials, followId) => {
     }
 };
 
-export { createUser, getList, read, updateUser, deleteUser, follow, unfollow };
+const findPeople = async (params, credentials, signal) => {
+    try {
+        let response = await fetch(
+            'http://localhost:5000/api/users/findpeople/' + params.userId,
+            {
+                method: 'GET',
+                signal: signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + credentials.t,
+                },
+            }
+        );
+        return await response.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export {
+    createUser,
+    getList,
+    read,
+    updateUser,
+    deleteUser,
+    follow,
+    unfollow,
+    findPeople,
+};

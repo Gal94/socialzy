@@ -47,24 +47,26 @@ exports.list = async (req, res, next) => {
 
 // Also gets the parameter
 exports.userByID = async (req, res, next, id) => {
-    try {
-        // populate the list of followers and following
-        let user = await User.findById(id)
-            .populate('following', '_id name')
-            .populate('followers', '_id name')
-            .exec();
-        if (!user)
+    if (id != 'undefined') {
+        try {
+            // populate the list of followers and followingcls
+            let user = await User.findById(id)
+                .populate('following', '_id name')
+                .populate('followers', '_id name')
+                .exec();
+            if (!user)
+                return res.status('400').json({
+                    error: 'User not found',
+                });
+            // Store user info on the request object for next middlewares
+            req.profile = user;
+            next();
+        } catch (err) {
+            console.log(err);
             return res.status('400').json({
-                error: 'User not found',
+                error: 'Could not retrieve user',
             });
-        // Store user info on the request object for next middlewares
-        req.profile = user;
-        next();
-    } catch (err) {
-        console.log(err);
-        return res.status('400').json({
-            error: 'Could not retrieve user',
-        });
+        }
     }
 };
 
@@ -211,5 +213,23 @@ exports.removeFollower = async (req, res, next) => {
         return res.status(400).json({
             error: errorHandler.getErrorMessage(err),
         });
+    }
+};
+
+// Goes through userById as well
+exports.findPeople = async (req, res, next) => {
+    let following = req.profile.following;
+    following.push(req.profile._id);
+    // returns all names of users who's id is not in the following array
+    try {
+        let users = await User.find({ _id: { $nin: following } }).select(
+            'name'
+        );
+        res.json(users);
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(400)
+            .json({ error: errorHandler.getErrorMessage(err) });
     }
 };

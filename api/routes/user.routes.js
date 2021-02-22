@@ -39,4 +39,8 @@ router
     .put(isAuthenticated, isAuthorized, userController.update)
     .delete(isAuthenticated, isAuthorized, userController.remove);
 
+router
+    .route('/findpeople/:userId')
+    .get(isAuthenticated, userController.findPeople);
+
 module.exports = router;
