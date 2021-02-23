@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-// import Post from './Post';
+import Post from './Post';
 
 export default function PostList(props) {
     return (
         <div style={{ marginTop: '24px' }}>
-            {/* {props.posts.map((item, index) => {
+            {props.posts.map((item, index) => {
                 return (
                     <Post
                         post={item}
@@ -12,7 +12,7 @@ export default function PostList(props) {
                         onRemove={props.removeUpdate}
                     />
                 );
-            })} */}
+            })}
         </div>
     );
 }

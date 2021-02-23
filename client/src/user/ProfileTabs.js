@@ -13,7 +13,6 @@ export default function ProfileTabs(props) {
     const handleTabChange = (event, value) => {
         setTab(value);
     };
-
     return (
         <div>
             <AppBar position='static' color='default'>
@@ -53,8 +52,8 @@ export default function ProfileTabs(props) {
 
 ProfileTabs.propTypes = {
     user: PropTypes.object.isRequired,
-    // removePostUpdate: PropTypes.func.isRequired,
-    // posts: PropTypes.array.isRequired,
+    removePostUpdate: PropTypes.func.isRequired,
+    posts: PropTypes.array.isRequired,
 };
 
 const TabContainer = (props) => {
@@ -66,5 +65,5 @@ const TabContainer = (props) => {
 };
 
 TabContainer.propTypes = {
-    // children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 };

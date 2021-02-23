@@ -20,7 +20,7 @@ import { isAuthenticated } from '../auth/auth-helper';
 import FollowProfileButton from './FollowProfileButton';
 import ProfileTabs from './ProfileTabs';
 import { read } from './api-user';
-import { postsByUser } from '../post/api-post';
+import { postsByUser, remove } from '../post/api-post';
 
 const useStyles = makeStyles((theme) => ({
     root: theme.mixins.gutters({
@@ -64,8 +64,8 @@ export default function Profile({ match }) {
             console.log(data.error);
             setRedirectToSignin(true);
         } else {
-            setUser(data);
-            loadPosts(match.params.userId);
+            await setUser(data);
+            await loadPosts(match.params.userId);
             let isFollowing = checkFollow(data);
             setFollowing(isFollowing);
         }
@@ -86,10 +86,10 @@ export default function Profile({ match }) {
         return false;
     };
 
-    const loadPosts = async (users) => {
+    const loadPosts = async (userId) => {
         let data = await postsByUser(
             {
-                userId: user,
+                userId: userId,
             },
             { t: jwt.token }
         );
@@ -182,11 +182,7 @@ export default function Profile({ match }) {
                     />
                 </ListItem>
             </List>
-            <ProfileTabs
-                user={user}
-                posts={posts}
-                // removePostUpdate={removePost}
-            />
+            <ProfileTabs user={user} posts={posts} removePostUpdate={remove} />
         </Paper>
     );
 }

@@ -47,7 +47,7 @@ exports.list = async (req, res, next) => {
 
 // Also gets the parameter
 exports.userByID = async (req, res, next, id) => {
-    if (id != 'undefined') {
+    if (id != 'undefined' && id != '[object Object]') {
         try {
             // populate the list of followers and followingcls
             let user = await User.findById(id)
