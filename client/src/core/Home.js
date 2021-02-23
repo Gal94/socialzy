@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import unicornbikeImg from './../assets/images/unicornbike.jpg';
+import logo from './../assets/images/logo.png';
 import NewsFeed from '../post/NewsFeed';
 import FindPeople from './../user/FindPeople';
 import Grid from '@material-ui/core/Grid';
@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.secondary,
     },
     media: {
-        minHeight: 400,
+        minHeight: 300,
+        width: 500,
     },
     credit: {
         padding: 10,
@@ -62,18 +63,18 @@ const Home = ({ history }) => {
             {!defaultPage && (
                 <Grid container spacing={8}>
                     <Grid item xs={12}>
-                        <Card className={classes.Card}>
+                        <Card className={classes.card}>
                             <Typography variant='h6' className={classes.title}>
                                 Home Page
                             </Typography>
                             <CardMedia
                                 className={classes.media}
-                                image={unicornbikeImg}
-                                title='Unicorn Bicycle'
+                                image={logo}
+                                title='socialzy'
                             />
                             <CardContent>
                                 <Typography variant='body2' component='p'>
-                                    Welcome to the MERN skeleton homepage.
+                                    Welcome to the Socialzy homepage.
                                 </Typography>
                             </CardContent>
                         </Card>
